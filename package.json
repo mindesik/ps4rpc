@@ -8,8 +8,11 @@
     "discord-rich-presence": "0.0.7",
     "electron": "^2.0.9",
     "electron-store": "^2.0.0",
-    "jquery": "^3.3.1"
-    },
+    "jquery": "^3.3.1",
+    "node-cron": "^2.0.3",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  },
   "scripts": {
     "start": "electron ."
   },
