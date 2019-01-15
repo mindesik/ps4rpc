@@ -2,6 +2,7 @@ const client = require('discord-rich-presence')('457775893746810880')
 const request = require('request-promise-native')
 let lastTitleName = null
 let startedAt = null
+const path = require('path')
 
 var unixTimestamp = Math.round(new Date("2017-09-15 00:00:00.000").getTime() / 1000);
 
@@ -17,8 +18,6 @@ var http = require('https')
 let tray = null
 
 function createWindow() {
-    app.dock.hide()
-
     ipcMain.on('get-account-data', (event, arg) => {
 
         event.sender.send('profile-picture', store.get('profilePicture'))
@@ -186,17 +185,19 @@ app.on('ready', () => {
 })
 
 const createTray = () => {
-    tray = new Tray('site/appicon.png')
+    tray = new Tray(path.resolve(__dirname, 'site/appicon.png'))
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show', click: function () {
                 // win.setAlwaysOnTop(true);
+                app.dock.show()
                 app.show()
             }
         },
         {
             label: 'Hide', click: function () {
                 app.hide()
+                app.dock.hide()
             }
         },
         {
@@ -208,6 +209,7 @@ const createTray = () => {
         },
         {
             label: 'Close', click: function () {
+                app.dock.hide()
                 app.hide()
             }
         }
