@@ -14,8 +14,12 @@
     "request-promise-native": "^1.0.5"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "node node_modules/.bin/electron-packager ./ --platform mas --out ./dist --ignore=\"\\^/src|^/dist|^/gulpfile.js|^/test.js\" --overwrite"
   },
   "author": "Frankity",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "electron-packager": "^13.0.1"
+  }
 }

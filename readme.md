@@ -10,3 +10,9 @@ after login wait almost 1 min to the cron task get your status, after that resta
 
 ![AppPreview](http://i.migueldeleon.co/PQ9Avb3qiX.png)
 ![discord preview](http://i.migueldeleon.co/Nh0NIPF0Q2.png)
+
+## Building
+
+```
+$ yarn && yarn run build
+```
