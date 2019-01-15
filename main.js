@@ -14,6 +14,8 @@ var http = require('https')
 let tray = null
 
 function createWindow() {
+    app.dock.hide()
+
     ipcMain.on('get-account-data', (event, arg) => {
 
         event.sender.send('profile-picture', store.get('profilePicture'))
@@ -192,7 +194,7 @@ const createTray = () => {
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show', click: function () {
-                win.setAlwaysOnTop(true);
+                // win.setAlwaysOnTop(true);
                 app.show()
             }
         },
@@ -210,7 +212,7 @@ const createTray = () => {
         },
         {
             label: 'Close', click: function () {
-                app.quit()
+                app.hide()
             }
         }
     ])
