@@ -43,6 +43,7 @@ function createWindow() {
     console.log(store.get('accountInfo'))
     if (store.get('responses') != undefined) {
         win = new BrowserWindow({ width: 414, height: 750, webPreferences: { nodeIntegration: true } })
+        getPsnPresence()
         startCron()
         win.loadFile('site/index.html')
     } else {
