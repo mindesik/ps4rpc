@@ -165,10 +165,9 @@ function updateRPC() {
     console.log(obj.platform)
     if (obj.titleName != undefined) {
         client.updatePresence({
-            state: 'Playing: ' + obj.titleName,
+            state: obj.titleName,
             details: obj.onlineStatus,
-  
-            largueImageKey: 'ps4_main',
+            largeImageKey: 'ps4_main',
             instance: true
         })
     } else {
