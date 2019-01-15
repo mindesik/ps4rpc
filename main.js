@@ -1,4 +1,7 @@
 const client = require('discord-rich-presence')('457775893746810880')
+const request = require('request-promise-native')
+let lastTitleName = null
+let startedAt = null
 
 var unixTimestamp = Math.round(new Date("2017-09-15 00:00:00.000").getTime() / 1000);
 
@@ -132,49 +135,42 @@ function getPsnPresence() {
 
     var options = {
         method: 'GET',
-        port: 443,
-        hostname: 'us-prof.np.community.playstation.net',
-        path: '/userProfile/v1/users/me/profile2?fields=npId,onlineId,avatarUrls,plus,aboutMe,languagesUsed,trophySummary(@default,progress,earnedTrophies),isOfficiallyVerified,personalDetail(@default,profilePictureUrls),personalDetailSharing,personalDetailSharingRequestMessageFlag,primaryOnlineStatus,presences(@titleInfo,hasBroadcastData),friendRelation,requestMessageFlag,blocking,mutualFriendsCount,following,followerCount,friendsCount,followingUsersCount&avatarSizes=m,xl&profilePictureSizes=m,xl&languagesUsedLanguageSet=set3&psVitaTitleIcon=circled&titleIconSize=s',
+        uri: 'https://us-prof.np.community.playstation.net/userProfile/v1/users/me/profile2?fields=npId,onlineId,avatarUrls,plus,aboutMe,languagesUsed,trophySummary(@default,progress,earnedTrophies),isOfficiallyVerified,personalDetail(@default,profilePictureUrls),personalDetailSharing,personalDetailSharingRequestMessageFlag,primaryOnlineStatus,presences(@titleInfo,hasBroadcastData),friendRelation,requestMessageFlag,blocking,mutualFriendsCount,following,followerCount,friendsCount,followingUsersCount&avatarSizes=m,xl&profilePictureSizes=m,xl&languagesUsedLanguageSet=set3&psVitaTitleIcon=circled&titleIconSize=s',
+        json: true,
         headers: {
             'Authorization': 'Bearer ' + object['access_token']
         }
     }
 
-    var req = http.request(options, function (res) {
-        var data = ""
-        res.setEncoding("ascii")
-        res.on('data', function (chunk) {
-            data += chunk
-        })
-        res.on('end', function () {
-            var d = JSON.parse(data)
-            store.set('onlineID', d.profile.onlineId)
-            store.set('profilePicture', d.profile.avatarUrls[1].avatarUrl)
-            store.set("accountInfo", d.profile.presences[0])
-            updateRPC()
-        })
-    })
-
-    req.on('error', function (e) {
+    request(options).then(d => {
+        store.set('onlineID', d.profile.onlineId)
+        store.set('profilePicture', d.profile.avatarUrls[1].avatarUrl)
+        store.set("accountInfo", d.profile.presences[0])
+        updateRPC()
+    }).catch(e => {
         console.log('problem with request: ' + e.message)
     })
-    req.end()
-
-
 }
 
 function updateRPC() {
     var obj = store.get('accountInfo')
     console.log(obj.platform)
     if (obj.titleName != undefined) {
-        client.updatePresence({
-            state: obj.titleName,
-            details: obj.onlineStatus,
-            largeImageKey: 'ps4_main',
-            instance: true
-        })
+        if (obj.titleName != lastTitleName) {
+            lastTitleName = obj.titleName
+            startedAt = new Date()
+            client.updatePresence({
+                state: obj.titleName,
+                details: obj.onlineStatus,
+                largeImageKey: 'ps4_main',
+                startTimestamp: startedAt,
+                instance: true,
+            })
+        }
     } else {
         client.disconnect()
+        lastTitleName = null
+        startedAt = null
         console.log('not playing')
     }
 }
